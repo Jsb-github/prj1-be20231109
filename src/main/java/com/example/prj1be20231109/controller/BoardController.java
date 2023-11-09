@@ -13,6 +13,7 @@ public class BoardController {
     @PostMapping("add")
     public void add(){
         System.out.println("BoardController.add");
+
     }
 
 }
