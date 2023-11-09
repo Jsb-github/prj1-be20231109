@@ -3,7 +3,10 @@ package com.example.prj1be20231109.service;
 import com.example.prj1be20231109.domain.Board;
 import com.example.prj1be20231109.mapper.BoardMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,5 +37,10 @@ public class BoardService {
         }
 
         return true;
+    }
+
+    public List<Board> select() {
+
+        return mapper.selectAll();
     }
 }
