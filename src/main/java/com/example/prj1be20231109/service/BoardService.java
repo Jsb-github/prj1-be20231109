@@ -43,4 +43,14 @@ public class BoardService {
 
         return mapper.selectAll();
     }
+
+    public Board get(Integer id) {
+
+        return mapper.selectById(id);
+    }
+
+    public boolean remove(Integer id) {
+
+        return mapper.deleteById(id) ==1;
+    }
 }
