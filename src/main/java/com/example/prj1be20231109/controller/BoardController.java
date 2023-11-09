@@ -21,6 +21,11 @@ public class BoardController {
     public ResponseEntity add(
             @RequestBody Board board
     ){
+        if(!service.validate(board)){
+            return ResponseEntity.badRequest().build();
+        }
+
+
        if(service.save(board)){
           return ResponseEntity.ok().build();
        }else {
