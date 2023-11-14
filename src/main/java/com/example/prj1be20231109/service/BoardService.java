@@ -1,9 +1,9 @@
 package com.example.prj1be20231109.service;
 
 import com.example.prj1be20231109.domain.Board;
+import com.example.prj1be20231109.domain.Member;
 import com.example.prj1be20231109.mapper.BoardMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,8 +14,8 @@ public class BoardService {
 
     private final BoardMapper mapper;
 
-    public boolean save(Board board) {
-
+    public boolean save(Board board, Member login) {
+        board.setWriter(login.getId());
         return mapper.insert(board)==1;
     }
 
@@ -32,9 +32,7 @@ public class BoardService {
             return false;
         }
 
-        if(board.getWriter() == null || board.getWriter().isBlank()){
-            return false;
-        }
+
 
         return true;
     }
@@ -57,5 +55,11 @@ public class BoardService {
     public boolean update(Board board) {
 
         return mapper.update(board) ==1;
+    }
+
+    public boolean hasAccess(Integer id, Member login) {
+        Board board = mapper.selectById(id);
+
+        return board.getWriter().equals(login.getId());
     }
 }
