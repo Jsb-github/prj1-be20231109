@@ -20,6 +20,6 @@ public class Board {
     private String content;
 
     private String writer;
-
+    private String nickName;
     private LocalDateTime inserted;
 }
