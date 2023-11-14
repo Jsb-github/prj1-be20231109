@@ -54,4 +54,22 @@ public class BoardController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @PutMapping("update")
+    public ResponseEntity update(
+            @RequestBody Board board
+    ){
+        if(!service.validate(board)){
+            return ResponseEntity.badRequest().build();
+        }
+
+
+        if(service.update(board)){
+            return ResponseEntity.ok().build();
+        }else {
+            return ResponseEntity.internalServerError().build();
+        }
+
+
+    }
 }
