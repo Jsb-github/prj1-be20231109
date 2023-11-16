@@ -1,12 +1,13 @@
 package com.example.prj1be20231109.controller;
 
 import com.example.prj1be20231109.domain.Like;
+import com.example.prj1be20231109.domain.Member;
 import com.example.prj1be20231109.service.LikeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,9 +17,17 @@ public class LikeController {
     private final LikeService service;
 
     @PutMapping
-    public void like(
-     @RequestBody Like like
+    public ResponseEntity like(
+            @RequestBody Like like,
+            @SessionAttribute(value = "login", required = false)Member login
     ){
-        service.update(like);
+
+        if(login ==null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        service.update(like ,login);
+
+        return null;
     }
 }
