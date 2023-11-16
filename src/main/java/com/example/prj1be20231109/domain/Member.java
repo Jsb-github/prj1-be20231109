@@ -28,6 +28,14 @@ public class Member {
     private String phone;
     private String grade;
     private LocalDateTime inserted;
-
     private List<Auth> auth;
+
+    public boolean isAdmin(){
+        if(auth!=null){
+            auth.stream()
+                    .map(a->a.getName())
+                    .anyMatch(n-> n.equals("admin"));
+        }
+        return false;
+    }
 }

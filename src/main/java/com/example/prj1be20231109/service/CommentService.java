@@ -14,7 +14,7 @@ public class CommentService {
 
     private final CommentMapper mapper;
 
-    private final MemberService memberService;
+
 
     public boolean add(Comment comment, Member login) {
         comment.setMemberId(login.getId());
@@ -48,7 +48,12 @@ public class CommentService {
     }
 
     public boolean hasAccess(Integer id, Member login) {
-        if (memberService.isAdmin(login)){
+        if (login== null){
+            return false;
+        }
+
+
+        if (login.isAdmin()){
             return true;
         }
         Comment comment = mapper.selectById(id);

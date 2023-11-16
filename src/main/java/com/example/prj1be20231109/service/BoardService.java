@@ -3,6 +3,7 @@ package com.example.prj1be20231109.service;
 import com.example.prj1be20231109.domain.Board;
 import com.example.prj1be20231109.domain.Member;
 import com.example.prj1be20231109.mapper.BoardMapper;
+import com.example.prj1be20231109.mapper.CommentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ public class BoardService {
 
     private final BoardMapper mapper;
 
-    private final MemberService memberService;
+    private final CommentMapper commentMapper;
     public boolean save(Board board, Member login) {
         board.setWriter(login.getId());
         return mapper.insert(board)==1;
@@ -50,6 +51,10 @@ public class BoardService {
 
     public boolean remove(Integer id) {
 
+        // 1. 댓글이 있는 게시물 삭제
+        commentMapper.deleteByCommentId(id);
+
+
         return mapper.deleteById(id) ==1;
     }
 
@@ -59,7 +64,11 @@ public class BoardService {
     }
 
     public boolean hasAccess(Integer id, Member login) {
-        if(memberService.isAdmin(login)){
+        if(login == null){
+            return false;
+        }
+
+        if(login.isAdmin()){
             return true;
         }
 
@@ -69,8 +78,5 @@ public class BoardService {
     }
 
 
-    public int count() {
 
-        return mapper.coutAll();
-    }
 }

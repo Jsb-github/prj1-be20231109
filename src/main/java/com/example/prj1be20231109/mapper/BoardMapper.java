@@ -60,9 +60,11 @@ public interface BoardMapper {
             """)
     int deleteByWriter(String writer);
 
+
     @Select("""
-            SELECT COUNT(*)
-            FROM board
+                SELECT id
+                FROM board
+                WHERE writer=#{writer}
             """)
-    int coutAll();
+    List<Integer> selectIdListByMemberId(String writer);
 }
