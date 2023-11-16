@@ -18,13 +18,16 @@ public interface BoardMapper {
 
 
     @Select("""
-                SELECT b.id,
-                       b.title, 
-                       m.nickName, 
-                       b.writer,
-                       b.inserted
-                FROM board b join member m ON b.writer=m.id
-                ORDER BY b.id DESC 
+               SELECT b.id,
+                      b.title,
+                      m.nickName,
+                      b.writer,
+                      b.inserted,
+                     COUNT(c.id) countComment
+               FROM board b join member m ON b.writer=m.id
+                            LEFT JOIN comment c on b.id=c.boardId
+               GROUP BY b.id
+               ORDER BY b.id DESC;
             """)
     List<Board> selectAll();
 
@@ -56,4 +59,10 @@ public interface BoardMapper {
                 WHERE writer=#{writer}
             """)
     int deleteByWriter(String writer);
+
+    @Select("""
+            SELECT COUNT(*)
+            FROM board
+            """)
+    int coutAll();
 }

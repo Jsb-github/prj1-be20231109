@@ -102,6 +102,11 @@ public class BoardController {
         }
     }
 
+    @GetMapping("count")
+    public int boardCount(){
+        int count = service.count();
+        return count;
+    }
 
 
 }

@@ -69,4 +69,8 @@ public class BoardService {
     }
 
 
+    public int count() {
+
+        return mapper.coutAll();
+    }
 }

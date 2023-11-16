@@ -15,6 +15,7 @@ public class Board {
 
     private Integer id;
 
+
     private String title;
 
     private String content;
@@ -22,4 +23,5 @@ public class Board {
     private String writer;
     private String nickName;
     private LocalDateTime inserted;
+    private Integer countComment;
 }
