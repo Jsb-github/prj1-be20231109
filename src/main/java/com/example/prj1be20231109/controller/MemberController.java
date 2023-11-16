@@ -93,11 +93,11 @@ public class MemberController {
     public ResponseEntity delete(String id,
      @SessionAttribute(value = "login", required = false) Member login
      ) {
-        if (login==null){
+        if (login==null){ // 세션이 존재 하지 않을때 401에러
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); //401
         }
 
-        if(!service.hasAccess(id,login)){
+        if(!service.hasAccess(id,login)){ //세션이 존재 할 때 세션에서 멤버 불러오는 로직
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); //403
         }
 
@@ -115,6 +115,7 @@ public class MemberController {
     public ResponseEntity edit(@RequestBody Member member,
       @SessionAttribute(value = "login",required = false)Member login
      ) {
+
         if (login==null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); //401
         }
@@ -147,7 +148,7 @@ public class MemberController {
     @PostMapping("logout")
     public void logout(HttpSession session){
         if(session != null){
-            session.invalidate();
+            session.invalidate(); //세션의 모든 속성을 제거 해줌
         }
     }
 

@@ -88,6 +88,8 @@ public class MemberService {
         return mapper.selectNickName(nickName);
     }
 
+
+
     public boolean login(Member member, WebRequest request) {
 
      Member dbMember =  mapper.selectById(member.getId());
@@ -110,7 +112,19 @@ public class MemberService {
     }
 
     public boolean hasAccess(String id, Member login) {
-
+        if(isAdmin(login)){
+            return true;
+        }
         return login.getId().equals(id);
+    }
+
+    public boolean isAdmin(Member login){
+        if(login.getAuth() !=null){
+            return login.getAuth()
+                    .stream()
+                    .map(e -> e.getName())
+                    .anyMatch(n->n.equals("admin"));
+        }
+        return false;
     }
 }

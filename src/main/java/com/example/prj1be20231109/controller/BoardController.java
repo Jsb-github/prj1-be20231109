@@ -100,7 +100,8 @@ public class BoardController {
         }else {
             return ResponseEntity.internalServerError().build();
         }
-
-
     }
+
+
+
 }
