@@ -43,9 +43,11 @@ public class BoardController {
     }
 
     @GetMapping("list")
-    public List<Board> list(){
+    public List<Board> list(
+    @RequestParam(value = "p",defaultValue = "1") Integer page
+    ){
 
-        return service.select();
+        return service.select(page);
     }
 
 

@@ -1,12 +1,16 @@
 package com.example.prj1be20231109.domain;
 
+import com.example.prj1be20231109.util.AppUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.annotations.Insert;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 
 @Data
 @AllArgsConstructor
@@ -25,4 +29,9 @@ public class Board {
     private LocalDateTime inserted;
     private Integer countComment;
     private Integer countLike;
+
+
+    public String getAgo() {
+        return AppUtil.getAgo(inserted,LocalDateTime.now());
+    }
 }
