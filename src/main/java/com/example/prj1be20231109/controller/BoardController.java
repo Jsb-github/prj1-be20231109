@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 ;import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -43,9 +44,11 @@ public class BoardController {
     }
 
     @GetMapping("list")
-    public List<Board> list(
+    public Map<String, Object> list(
     @RequestParam(value = "p",defaultValue = "1") Integer page
     ){
+
+
 
         return service.select(page);
     }
