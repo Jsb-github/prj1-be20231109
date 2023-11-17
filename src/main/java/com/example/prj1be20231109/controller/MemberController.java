@@ -91,6 +91,7 @@ public class MemberController {
 
     @DeleteMapping
     public ResponseEntity delete(String id,
+     HttpSession session,
      @SessionAttribute(value = "login", required = false) Member login
      ) {
         if (login==null){ // 세션이 존재 하지 않을때 401에러
@@ -104,6 +105,7 @@ public class MemberController {
 
 
         if (service.deleteMember(id)) {
+            session.invalidate();
             return ResponseEntity.ok().build();
         }
 

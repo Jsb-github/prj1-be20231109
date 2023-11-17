@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/like")
@@ -16,8 +18,8 @@ public class LikeController {
 
     private final LikeService service;
 
-    @PutMapping
-    public ResponseEntity like(
+    @PostMapping
+    public ResponseEntity<Map<String,Object>> like(
             @RequestBody Like like,
             @SessionAttribute(value = "login", required = false)Member login
     ){
@@ -26,8 +28,16 @@ public class LikeController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        service.update(like ,login);
-
-        return null;
+        return ResponseEntity.ok().body(service.update(like ,login));
     }
+
+    @GetMapping("board/{boardId}")
+    public ResponseEntity<Map<String,Object>> get(
+     @PathVariable Integer boardId,
+     @SessionAttribute(value = "login", required = false)Member login
+    ){
+      return ResponseEntity.ok().body(service.get(boardId,login));
+
+    }
+
 }

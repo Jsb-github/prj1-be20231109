@@ -57,6 +57,7 @@ public class BoardController {
     @DeleteMapping("remove/{id}")
     public ResponseEntity remove(
             @PathVariable Integer id,
+
             @SessionAttribute(value="login", required=false) Member login
     ){
 
@@ -70,6 +71,7 @@ public class BoardController {
         }
 
         if(service.remove(id)){
+
             return  ResponseEntity.ok().build();
         }else{
             return ResponseEntity.internalServerError().build();
