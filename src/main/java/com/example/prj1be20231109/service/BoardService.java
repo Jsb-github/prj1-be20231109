@@ -2,6 +2,7 @@ package com.example.prj1be20231109.service;
 
 import com.example.prj1be20231109.domain.Board;
 
+import com.example.prj1be20231109.domain.BoardFile;
 import com.example.prj1be20231109.domain.Member;
 import com.example.prj1be20231109.mapper.BoardMapper;
 import com.example.prj1be20231109.mapper.CommentMapper;
@@ -21,6 +22,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -35,9 +37,11 @@ public class BoardService {
     private final LikeMapper likeMapper;
     private final FileMapper fileMapper;
 
-    @Value("${aw3.s3.bucket.name}")
-    private   String bucket;
+    @Value("${aws.s3.bucket.name}")
+    private String bucket;
 
+    @Value("${image.file.prefix}")
+    private String urlPrefix;
 
     private final S3Client s3;
 
@@ -134,7 +138,18 @@ public class BoardService {
 
     public Board get(Integer id) {
 
-        return mapper.selectById(id);
+      Board board = mapper.selectById(id);
+
+     List<BoardFile> boardFiles = fileMapper.selectNamesByBoardId(id);
+
+     for(BoardFile boardFile : boardFiles){
+         String url = urlPrefix + "prj1/"+id + "/" + boardFile.getFileName();
+         boardFile.setUrl(url);
+     }
+
+     board.setFileNames(boardFiles);
+
+      return board;
     }
 
     public boolean remove(Integer id) {

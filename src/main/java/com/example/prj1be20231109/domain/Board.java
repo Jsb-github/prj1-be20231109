@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -30,6 +31,7 @@ public class Board {
     private Integer countComment;
     private Integer countLike;
 
+    private List<BoardFile> fileNames;
 
     public String getAgo() {
         return AppUtil.getAgo(inserted,LocalDateTime.now());
