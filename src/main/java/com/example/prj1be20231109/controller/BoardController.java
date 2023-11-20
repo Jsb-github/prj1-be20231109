@@ -12,7 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-;import java.util.List;
+;import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -23,11 +24,11 @@ public class BoardController {
     private final BoardService service;
 
     @PostMapping("add")
-    public ResponseEntity add(
+    public ResponseEntity add (
             Board board,
             @RequestParam(value = "files[]", required = false) MultipartFile[] files,
             @SessionAttribute(value = "login",required = false) Member login
-    ){
+    )throws IOException {
 
 
         if(login==null){
