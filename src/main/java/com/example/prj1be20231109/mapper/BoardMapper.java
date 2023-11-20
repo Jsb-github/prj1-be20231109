@@ -2,7 +2,6 @@ package com.example.prj1be20231109.mapper;
 
 import com.example.prj1be20231109.domain.Board;
 import org.apache.ibatis.annotations.*;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -13,6 +12,7 @@ public interface BoardMapper {
                 INSERT INTO board(title,content,writer)
                 VALUES (#{title}, #{content},#{writer})
             """)
+    @Options(useGeneratedKeys = true,keyProperty = "id")
     int insert(Board board);
 
 
@@ -28,11 +28,14 @@ public interface BoardMapper {
             FROM board b join member m ON b.writer=m.id
                          LEFT JOIN comment c on b.id=c.boardId
                          LEFT JOIN boardlike l on b.id = l.boardId
+            
+            WHERE b.content LIKE #{keyword}
+                    OR b.title LIKE  #{keyword}          
             GROUP BY b.id
             ORDER BY b.id DESC
             LIMIT  #{from},10;
             """)
-    List<Board> selectAll(Integer from);
+    List<Board> selectAll(Integer from, String keyword);
 
     @Select("""
         SELECT b.id, b.title, b.content, m.nickName,b.writer, b.inserted

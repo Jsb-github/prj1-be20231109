@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,9 +42,12 @@ public class CommentController {
     }
 
     @GetMapping("list")
-    public List<Comment> list(@RequestParam("id") Integer boardId){
+    public Map<String,Object> list(
+            @RequestParam("id") Integer boardId,
+            @RequestParam(value = "p",defaultValue = "1") Integer page
+    ){
 
-        return service.list(boardId);
+        return service.list(boardId,page);
     }
 
     @DeleteMapping("{id}")

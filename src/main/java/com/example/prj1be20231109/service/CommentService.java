@@ -6,7 +6,9 @@ import com.example.prj1be20231109.mapper.CommentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -37,9 +39,38 @@ public class CommentService {
         return true;
     }
 
-    public List<Comment> list(Integer boardId) {
+    public Map<String,Object> list(Integer boardId, Integer page) {
+        Map<String, Object> map = new HashMap<>();
 
-        return mapper.selectByBoardId(boardId);
+        Map<String, Object> pageInfo = new HashMap<>();
+
+        int countAll = mapper.countALl(boardId); // 총 코멘트 수
+        int lastPageNumber = (countAll -1)/5+1; // 마지막 페이지 번호
+        int startPageNumber= (page-1) / 5 * 5 +1;
+        int endPageNumber= startPageNumber + 4;
+            endPageNumber=Math.min(endPageNumber,lastPageNumber);
+
+        int prevPageNumber = startPageNumber-5;
+
+        int nextPageNumber = endPageNumber+1;
+
+        pageInfo.put("currentPageNumber",page);
+        pageInfo.put("startPageNumber",startPageNumber);
+        pageInfo.put("endPageNumber",endPageNumber);
+        pageInfo.put("lastPageNumber",lastPageNumber);
+        if(prevPageNumber >0){
+            pageInfo.put("prevPageNumber",prevPageNumber);
+        }
+
+        if(nextPageNumber<= lastPageNumber) {
+            pageInfo.put("nextPageNumber", nextPageNumber);
+        }
+        int from = (page-1) *5;
+
+        map.put("commentList",mapper.selectByBoardId(boardId,from));
+        map.put("pageInfo",pageInfo);
+
+        return map;
     }
 
     public boolean remove(Integer id) {

@@ -25,9 +25,10 @@ public interface CommentMapper {
             FROM comment c JOIN  member m
             on  c.memberId = m.id
             WHERE boardId =  #{boardId}
-            ORDER BY c.id DESC ;
+            ORDER BY c.id DESC 
+            LIMIT #{from},5;
             """)
-    List<Comment> selectByBoardId(Integer boardId);
+    List<Comment> selectByBoardId(Integer boardId,Integer from);
 
     @Delete("""
                 DELETE FROM comment
@@ -65,4 +66,11 @@ public interface CommentMapper {
             WHERE memberId =#{memberId}
             """)
     int deleteByMemberCommentId(String memberId);
+
+    @Select("""
+            SELECT COUNT(*)
+            FROM comment
+            WHERE boardId = #{boardId}
+            """)
+    int countALl(Integer boardId);
 }
