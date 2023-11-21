@@ -160,6 +160,11 @@ public class BoardService {
         // 2. 게시물에 달린 좋아요 삭제
         likeMapper.deleteByLikeBoardId(id);
 
+        // 3. 게시물에 달린 이미지 삭제
+        fileMapper.deleteByFileBoardId(id);
+
+
+
         return mapper.deleteById(id) ==1;
     }
 
