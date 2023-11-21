@@ -147,7 +147,7 @@ public class BoardService {
          boardFile.setUrl(url);
      }
 
-     board.setFileNames(boardFiles);
+     board.setFiles(boardFiles);
 
       return board;
     }
