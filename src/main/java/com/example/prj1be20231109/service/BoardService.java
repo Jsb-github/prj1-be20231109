@@ -16,10 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import java.io.File;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -99,12 +100,12 @@ public class BoardService {
         return true;
     }
 
-    public Map<String,Object> select(Integer page, String keyword) {
+    public Map<String,Object> select(Integer page, String keyword, String category) {
        Map<String,Object> map = new HashMap<>();
 
        Map<String,Object> pageInfo=new HashMap<>();
 
-        int countAll=mapper.countAll(); // 총게시물
+        int countAll = mapper.countAll("%" + keyword + "%", category); // 총게시물
         int lastPageNumber = (countAll -1)/10+1; // 마지막 페이지 번호
         int startPageNumber= (page-1) / 10 * 10 +1;
         int endPageNumber= startPageNumber + 9;
@@ -130,7 +131,7 @@ public class BoardService {
         int from = (page-1) *10;
 
 
-        map.put("boardList" ,mapper.selectAll(from,"%"+keyword+"%"));
+        map.put("boardList" ,mapper.selectAll(from, "%" + keyword + "%", category));
         map.put("pageInfo" ,pageInfo);
 
          return map;
@@ -160,17 +161,66 @@ public class BoardService {
         // 2. 게시물에 달린 좋아요 삭제
         likeMapper.deleteByLikeBoardId(id);
 
-        // 3. 게시물에 달린 이미지 삭제
-        fileMapper.deleteByFileBoardId(id);
-
-
+        //3. aws3 버켓 지우기
+        deleteFile(id);
 
         return mapper.deleteById(id) ==1;
     }
 
-    public boolean update(Board board) {
+    private void deleteFile(Integer id) {
+        //파일명 조회
+        List<BoardFile> boardFiles = fileMapper.selectNamesByBoardId(id);
 
-        return mapper.update(board) ==1;
+        //  aws3 버켓 지우기
+        for(BoardFile file : boardFiles){
+            String key = "prj1/" + id +"/" +file.getFileName();
+
+            DeleteObjectRequest ObjectRequest =
+                    DeleteObjectRequest.builder()
+                            .bucket(bucket)
+                            .key(key)
+                            .build();
+
+            s3.deleteObject(ObjectRequest);
+        }
+
+        // 4. 게시물에 달린 이미지 삭제
+        fileMapper.deleteByFileBoardId(id);
+
+    }
+
+    public boolean update(Board board, MultipartFile[] uploadFiles, List<Integer> removeFileIds) throws IOException {
+        // 파일 지우기
+
+        if(removeFileIds != null){
+            for(Integer id : removeFileIds){
+
+                BoardFile file= fileMapper.selectById(id);
+                String key = "prj1/" + board.getId() +"/" +file.getFileName();
+                DeleteObjectRequest deleteObject = DeleteObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(key)
+                        .build();
+
+                s3.deleteObject(deleteObject);
+                //db에서 지우기
+                fileMapper.deleteById(id);
+            }
+
+        }
+
+
+        //파일 추가하기
+        if (uploadFiles != null) {
+                for (MultipartFile files : uploadFiles) {
+                    //s3버킷에 업로드
+                    upload(board.getId(),files);
+                    //db에추가하기
+                    fileMapper.insert(board.getId(),files.getOriginalFilename());
+                }
+        }
+
+        return  mapper.update(board)==1;
     }
 
     public boolean hasAccess(Integer id, Member login) {

@@ -2,6 +2,7 @@ package com.example.prj1be20231109.controller;
 
 
 import com.example.prj1be20231109.domain.Board;
+import com.example.prj1be20231109.domain.BoardFile;
 import com.example.prj1be20231109.domain.Member;
 import com.example.prj1be20231109.service.BoardService;
 import jakarta.servlet.http.HttpSession;
@@ -52,9 +53,10 @@ public class BoardController {
     @GetMapping("list")
     public Map<String, Object> list(
     @RequestParam(value = "p",defaultValue = "1") Integer page,
-    @RequestParam(value= "k",defaultValue = "") String keyword
+    @RequestParam(value= "k",defaultValue = "") String keyword,
+    @RequestParam(value = "c",defaultValue = "all") String category
     ){
-        return service.select(page,keyword);
+        return service.select(page,keyword,category);
     }
 
 
@@ -66,7 +68,6 @@ public class BoardController {
     @DeleteMapping("remove/{id}")
     public ResponseEntity remove(
             @PathVariable Integer id,
-
             @SessionAttribute(value="login", required=false) Member login
     ){
 
@@ -89,12 +90,17 @@ public class BoardController {
 
     @PutMapping("update")
     public ResponseEntity update(
-            @RequestBody Board board,
+             Board board,
+            @RequestParam(value = "removeFileIds[]", required = false) List<Integer> removeFileIds,
+            @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] uploadFiles,
             @SessionAttribute(value = "login",required = false) Member login
-    ){
-        if (login==null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); //401
-        }
+    )throws IOException {
+
+
+            if (login == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); //401
+            }
+
 
 
         if(!service.hasAccess(board.getId(),login)){
@@ -106,13 +112,13 @@ public class BoardController {
         }
 
 
-        if(service.update(board)){
-            return ResponseEntity.ok().build();
-        }else {
-            return ResponseEntity.internalServerError().build();
+            if (service.update(board,uploadFiles,removeFileIds)) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.internalServerError().build();
+            }
         }
+
     }
 
 
-
-}

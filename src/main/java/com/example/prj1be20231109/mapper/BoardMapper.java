@@ -18,6 +18,7 @@ public interface BoardMapper {
 
 
     @Select("""
+            <script>
             SELECT b.id,
                    b.title,
                    m.nickName,
@@ -30,13 +31,21 @@ public interface BoardMapper {
                          LEFT JOIN comment c on b.id=c.boardId
                          LEFT JOIN boardlike l on b.id = l.boardId
                          LEFT JOIN boardfile f on b.id = f.boardId
-            WHERE b.content LIKE #{keyword}
-                    OR b.title LIKE  #{keyword}          
+            WHERE 
+                    <trim prefixOverrides="OR">
+                        <if test= "category == 'all' or  category== 'title'">
+                         OR title LIKE #{keyword}
+                        </if>
+                        <if test= "category == 'all' or category == 'content'">
+                        OR content LIKE  #{keyword}
+                        </if>
+                    </trim>          
             GROUP BY b.id
             ORDER BY b.id DESC
             LIMIT  #{from},10;
+            </script>
             """)
-    List<Board> selectAll(Integer from, String keyword);
+    List<Board> selectAll(Integer from, String keyword , String category);
 
     @Select("""
         SELECT b.id, b.title, b.content, m.nickName,b.writer, b.inserted
@@ -54,9 +63,7 @@ public interface BoardMapper {
     @Update("""
             UPDATE board
             SET title = #{title},
-                content =#{content},
-                writer = #{writer},
-                inserted = NOW()
+                content =#{content}
                 WHERE id = #{id}
             """)
     int update(Board board);
@@ -76,8 +83,19 @@ public interface BoardMapper {
     List<Integer> selectIdListByMemberId(String writer);
 
     @Select("""
+            <script>
                 SELECT COUNT(*)
                 FROM board
+                WHERE     
+                    <trim prefixOverrides="OR">
+                        <if test= "category== 'all' or  category== 'title'">
+                           OR   title LIKE #{keyword}
+                        </if>
+                        <if test= "category== 'all' or category == 'content'">
+                        OR  content LIKE  #{keyword}
+                        </if>
+                    </trim>
+            </script>  
             """)
-    int countAll();
+    int countAll(String keyword, String category);
 }
