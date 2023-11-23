@@ -21,7 +21,7 @@ public class Comment {
 
 
     public String getAgo() {
-        return AppUtil.getAgo(inserted,LocalDateTime.now());
+        return AppUtil.getAgo(inserted);
     }
 
 }

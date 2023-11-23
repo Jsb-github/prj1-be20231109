@@ -3,10 +3,13 @@ package com.example.prj1be20231109.util;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 
 public class AppUtil {
-    public static String getAgo(LocalDateTime inserted, LocalDateTime now){
+    public static String getAgo(LocalDateTime inserted){
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+
         if (inserted.isBefore(now.minusYears(1))) {
             Period between = Period.between(inserted.toLocalDate(), now.toLocalDate());
             return between.get(ChronoUnit.YEARS) + "년 전";
